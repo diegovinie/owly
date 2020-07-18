@@ -1,7 +1,14 @@
 import config from '@/config'
 
 let gapi
-let onStatusChanged = () => listFiles()
+
+const listeners = {
+  __onStatusChanged__: listFiles,
+  get onStatusChanged() { return this.__onStatusChanged__ },
+  set onStatusChanged(fn) {
+    if (fn instanceof Function) this.__onStatusChanged__ = fn
+  }
+}
 
 function init() {
   const id = 'google-drive-script'
@@ -26,9 +33,9 @@ function handleClientLoad() {
 }
 
 function handleSuccessfulInit() {
-  gapi.auth2.getAuthInstance().isSignedIn.listen(onStatusChanged)
+  gapi.auth2.getAuthInstance().isSignedIn.listen(listeners.onStatusChanged)
 
-  onStatusChanged(gapi.auth2.getAuthInstance().isSignedIn.get())
+  listeners.onStatusChanged(gapi.auth2.getAuthInstance().isSignedIn.get())
 }
 
 function handleErrorInit(error) {
@@ -60,15 +67,16 @@ function listFiles() {
       'fields': "nextPageToken, files(id, name)"
     })
     .then(e => console.log(e) || e)
-    .then(res => res.result.files);
+    .then(res => res.result.files)
 }
 
 export default {
   init,
   gapi,
-  onStatusChanged,
-  handleClientLoad,
+  listeners,
   signIn,
   signOut,
-  listFiles,
+  drive: {
+    listFiles
+  }
 }

@@ -10,6 +10,9 @@
       <button @click="connect" type="button">
         connect
       </button>
+      <button v-if="connected" @click="getFiles" type="button">
+        get files
+      </button>
     </section>
   </div>
 </template>
@@ -37,17 +40,16 @@ export default {
     },
 
     getFiles() {
-      this.connected && google.listFiles()
+      google.drive.listFiles()
     },
 
     connect() {
-      google.onStatusChanged = this.onStatusChanged
       google.init()
     }
   },
 
   mounted() {
-
+    google.listeners.onStatusChanged = this.onStatusChanged
   }
 }
 </script>
