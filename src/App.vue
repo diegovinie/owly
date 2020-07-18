@@ -2,17 +2,52 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <ParseImages />
+    <HelloWorld msg="" />
+    <section>
+      <div class="">
+        is connected: {{ connected }}
+      </div>
+      <button @click="connect" type="button">
+        connect
+      </button>
+    </section>
   </div>
 </template>
 
 <script>
 import ParseImages from './components/ParseImages.vue'
+import HelloWorld from './components/HelloWorld.vue'
+import google from '@/services/google'
 
 export default {
   name: 'App',
 
   components: {
-    ParseImages
+    ParseImages,
+    HelloWorld
+  },
+
+  data: () => ({
+    connected: false
+  }),
+
+  methods: {
+    onStatusChanged(status) {
+      this.connected = !!status
+    },
+
+    getFiles() {
+      this.connected && google.listFiles()
+    },
+
+    connect() {
+      google.onStatusChanged = this.onStatusChanged
+      google.init()
+    }
+  },
+
+  mounted() {
+
   }
 }
 </script>
