@@ -1,14 +1,16 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
     <section>
       <div class="">
-        is connected: {{ connected }}
+        is connected: 
+        <span :class="`has-text-${connected ? 'success' : 'danger'}`">
+          {{ connected }}
+        </span>
       </div>
-      <button @click="connect" type="button">
+      <button @click="connect" type="button" class="button">
         connect
       </button>
-      <button v-if="connected" @click="getFiles" type="button">
+      <button v-if="connected" @click="getFiles" type="button" class="button is-info">
         get files
       </button>
       <div class="">
@@ -70,13 +72,17 @@ export default {
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="scss">
+  // @import 'variables';
+  @import url('https://use.fontawesome.com/releases/v5.12.0/css/all.css');
+  @import 'bulma/bulma.sass';
+
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+  }
 </style>
