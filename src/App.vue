@@ -1,8 +1,6 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <ParseImages />
-    <HelloWorld msg="" />
     <section>
       <div class="">
         is connected: {{ connected }}
@@ -13,25 +11,39 @@
       <button v-if="connected" @click="getFiles" type="button">
         get files
       </button>
+      <div class="">
+        <h3>Results:</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="file in files" :key="file.id">
+              <td>{{ file.value }}</td>
+              <td>{{ file.createdAt }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
   </div>
 </template>
 
 <script>
-import ParseImages from './components/ParseImages.vue'
-import HelloWorld from './components/HelloWorld.vue'
 import google from '@/services/google'
+import parseImagesMixin from '@/mixins/parseImages'
 
 export default {
   name: 'App',
 
-  components: {
-    ParseImages,
-    HelloWorld
-  },
+  mixins: [parseImagesMixin],
 
   data: () => ({
-    connected: false
+    connected: false,
+    files: []
   }),
 
   methods: {
@@ -41,6 +53,10 @@ export default {
 
     getFiles() {
       google.drive.listFiles()
+        .then(this.parseImagesMapFiles)
+        .then(files => {
+          this.files = files || []
+        })
     },
 
     connect() {

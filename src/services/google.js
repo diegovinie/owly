@@ -63,8 +63,10 @@ function signOut() {
 function listFiles() {
   return gapi.client.drive.files
     .list({
-      'pageSize': 10,
-      'fields': "nextPageToken, files(id, name)"
+      // q: 'name = "owly" and mimeType="application/vnd.google-apps.folder"',
+      q: '"1G9rYbxg6OZeu3qrKhnBvxK-DW9-aSJBg" in parents',
+      // pageSize: 10,
+      fields: "nextPageToken, files(id, name, imageMediaMetadata)"
     })
     .then(e => console.log(e) || e)
     .then(res => res.result.files)
