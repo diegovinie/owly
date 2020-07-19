@@ -46,10 +46,9 @@
         </table>
       </div>
     </section>
-    <section>
-      <div id="chart1">
-
-      </div>
+    <section v-show="files.length">
+      <div id="chart1" style="height: 400px" />
+      <div id="chart2" style="height: 400px" />
     </section>
   </div>
 </template>
@@ -98,18 +97,18 @@ export default {
     },
 
     graph() {
-      var chart = new CanvasJS.Chart('chart1', {
+      var chart1 = new CanvasJS.Chart('chart1', {
         animationEnabled: true,
         title:{
-          text: "Daily High Temperature at Different Beaches"
+          text: "Promedio consumo electricidad"
         },
         axisX: {
-          valueFormatString: "DD MMM,YY"
+          valueFormatString: "HH - DD"
         },
         axisY: {
-          title: "Temperature (in °C)",
+          title: "kwats x h",
           includeZero: false,
-          suffix: " °C"
+          suffix: " kwh"
         },
         legend:{
           cursor: "pointer",
@@ -119,53 +118,56 @@ export default {
         toolTip:{
           shared: true
         },
-        data: [{
-          name: "Myrtle Beach",
-          type: "spline",
-          yValueFormatString: "#0.## °C",
-          showInLegend: true,
-          dataPoints: [
-            { x: new Date(2017,6,24), y: 31 },
-            { x: new Date(2017,6,25), y: 31 },
-            { x: new Date(2017,6,26), y: 29 },
-            { x: new Date(2017,6,27), y: 29 },
-            { x: new Date(2017,6,28), y: 31 },
-            { x: new Date(2017,6,29), y: 30 },
-            { x: new Date(2017,6,30), y: 29 }
-          ]
-        },
-        {
-          name: "Martha Vineyard",
-          type: "spline",
-          yValueFormatString: "#0.## °C",
-          showInLegend: true,
-          dataPoints: [
-            { x: new Date(2017,6,24), y: 20 },
-            { x: new Date(2017,6,25), y: 20 },
-            { x: new Date(2017,6,26), y: 25 },
-            { x: new Date(2017,6,27), y: 25 },
-            { x: new Date(2017,6,28), y: 25 },
-            { x: new Date(2017,6,29), y: 25 },
-            { x: new Date(2017,6,30), y: 25 }
-          ]
-        },
-        {
-          name: "Nantucket",
-          type: "spline",
-          yValueFormatString: "#0.## °C",
-          showInLegend: true,
-          dataPoints: [
-            { x: new Date(2017,6,24), y: 22 },
-            { x: new Date(2017,6,25), y: 19 },
-            { x: new Date(2017,6,26), y: 23 },
-            { x: new Date(2017,6,27), y: 24 },
-            { x: new Date(2017,6,28), y: 24 },
-            { x: new Date(2017,6,29), y: 23 },
-            { x: new Date(2017,6,30), y: 23 }
-          ]
-        }]
+        data: [
+          {
+            name: "Sumatoria",
+            type: "spline",
+            yValueFormatString: "#0.## kw",
+            showInLegend: true,
+            dataPoints: this.files.map(point => ({
+              x: new Date(point.createdAt),
+              y: point.value
+            }))
+          }
+        ]
       });
-      chart.render();
+      chart1.render();
+
+      var chart2 = new CanvasJS.Chart('chart2', {
+        animationEnabled: true,
+        title:{
+          text: "Consumo electricidad"
+        },
+        axisX: {
+          valueFormatString: "HH - DD"
+        },
+        axisY: {
+          title: "kwats",
+          includeZero: false,
+          suffix: " kw"
+        },
+        legend:{
+          cursor: "pointer",
+          fontSize: 16,
+          // itemclick: toggleDataSeries
+        },
+        toolTip:{
+          shared: true
+        },
+        data: [
+          {
+            name: "rates",
+            type: "column",
+            yValueFormatString: "#0.##",
+            showInLegend: true,
+            dataPoints: this.files.map(point => ({
+              x: new Date(point.createdAt),
+              y: point.rate
+            }))
+          }
+        ]
+      });
+      chart2.render();
     }
   },
 
