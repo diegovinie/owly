@@ -1,31 +1,43 @@
 <template>
   <div id="app">
-    <section>
+    <section class="mx-5">
       <div class="">
-        is connected: 
+        is connected:
         <span :class="`has-text-${connected ? 'success' : 'danger'}`">
           {{ connected }}
         </span>
       </div>
-      <button @click="connect" type="button" class="button">
-        connect
-      </button>
-      <button v-if="connected" @click="getFiles" type="button" class="button is-info">
-        get files
-      </button>
+      <div class="field is-grouped">
+        <button @click="connect" type="button" class="button control">
+          connect
+        </button>
+        <button v-if="connected" @click="getFiles" type="button" class="button is-info control">
+          get files
+        </button>
+        <button v-if="files.length" type="button" @click="calcDeltas" class="button is-primary control">
+          Deltas
+        </button>
+      </div>
+
       <div class="">
         <h3>Results:</h3>
         <table>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Value</th>
+              <th v-for="key in Object.keys(files.length ? files[0] : [])"
+                v-if="key !== 'id'"
+                :key="key">
+                {{ key }}
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="file in files" :key="file.id">
-              <td>{{ file.value }}</td>
-              <td>{{ file.createdAt }}</td>
+              <td v-for="[key, val] in Object.entries(file)"
+                v-if="key !== 'id'"
+                :key="`${key}-${val}`">
+                {{ val }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -37,6 +49,8 @@
 <script>
 import google from '@/services/google'
 import parseImagesMixin from '@/mixins/parseImages'
+import { mapDeltas } from '@/analytics'
+import { inspect } from '@/functions'
 
 export default {
   name: 'App',
@@ -63,6 +77,13 @@ export default {
 
     connect() {
       google.init()
+    },
+
+    calcDeltas() {
+      const fs = mapDeltas(this.files)
+      console.log(fs)
+
+      this.files = fs
     }
   },
 
