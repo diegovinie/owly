@@ -6,7 +6,7 @@ const trunk = (num, dec = 2) => Math.trunc(num * 10**dec) / (10**dec)
 
 const toHours = time => time / (1000 * 60 * 60)
 
-export const mapDeltas = values => {
+export const mapDeltas2 = values => {
   const vs = values.slice().reverse()
 
   for (let i = 0; i < vs.length; i++) {
@@ -23,6 +23,29 @@ export const mapDeltas = values => {
     vs[i].dTime = dTime
     vs[i].rate = rate
   }
+
+  return vs
+}
+
+export const mapDeltas = values => {
+  const vs = values.slice().reverse()
+
+  for (let i = 0; i < vs.length - 1; i++) {
+    let dValue = trunk(vs[i + 1].value - vs[i].value )
+    let diff = new Date(vs[i + 1].createdAt) - new Date(vs[i].createdAt)
+    let dTime = _c(trunk, toHours)(diff)
+    let rate = trunk(dValue / dTime, 3)
+
+    vs[i].dValue = dValue
+    vs[i].dTime = dTime
+    vs[i].rate = rate
+  }
+
+  const last = vs[vs.length - 1]
+  const prelast = vs[vs.length - 2]
+  last.dValue = prelast.dValue
+  last.dTime = prelast.dTime
+  last.rate = prelast.rate
 
   return vs
 }

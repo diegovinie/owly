@@ -139,7 +139,7 @@ export default {
           text: "Consumo electricidad"
         },
         axisX: {
-          valueFormatString: "HH - DD"
+          valueFormatString: "DD - HH:mm"
         },
         axisY: {
           title: "kwats",
@@ -157,8 +157,10 @@ export default {
         data: [
           {
             name: "rates",
-            type: "column",
+            type: "stepArea",
+            color: "#B36491",
             yValueFormatString: "#0.##",
+            xValueFormatString: "DD - HH:mm",
             showInLegend: true,
             dataPoints: this.files.map(point => ({
               x: new Date(point.createdAt),
